@@ -1,0 +1,24 @@
+{
+  "name": "alpine-tailwind-lightbox",
+  "description": "A simple lightbox for AlpineJS and Tailwind CSS projects.",
+  "keywords": [
+    "Alpine",
+    "Alpine JS",
+    "Lightbox"
+  ],
+  "version": "0.0.1",
+  "exports": {
+    ".": {
+      "import": "./dist/main.es.js",
+      "require": "./dist/main.cjs.js"
+    }
+  },
+  "module": "./dist/alpine-tailwind-lightbox.esm.js",
+  "browser": "./dist/alpine-tailwind-lightbox.min.js",
+  "scripts": {
+    "build": "node ./scripts/build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.3"
+  }
+}
