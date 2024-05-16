@@ -17,9 +17,11 @@
   "module": "./dist/alpine-tailwind-lightbox.esm.js",
   "main": "./src/index.js",
   "scripts": {
-    "build": "node ./scripts/build.js"
+    "build": "node ./scripts/build.js",
+    "css": "npx tailwindcss -o style.css --minify"
   },
   "devDependencies": {
-    "esbuild": "^0.21.3"
+    "esbuild": "^0.21.3",
+    "tailwindcss": "^3.4.3"
   }
 }
