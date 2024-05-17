@@ -1,5 +1,6 @@
 <div
     class="fixed inset-0 bg-black/90 touch-pinch-zoom z-[9999]"
+    style="display: none;"
     role="region"
     aria-modal="true"
     aria-roledescription="carousel"
@@ -13,7 +14,6 @@
     @keydown.left="$store.lightbox.prev(group)"
     @keydown.right="$store.lightbox.next(group)"
 >
-    <span x-text="group"></span>
     <ul aria-live="polite" role="presentation" id="lightbox-list">
         <template x-for="(item, index) in $store.lightbox.items[group]">
             <li

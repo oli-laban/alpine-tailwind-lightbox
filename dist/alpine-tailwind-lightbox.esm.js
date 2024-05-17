@@ -1,5 +1,6 @@
 var g=`<div
     class="fixed inset-0 bg-black/90 touch-pinch-zoom z-[9999]"
+    style="display: none;"
     role="region"
     aria-modal="true"
     aria-roledescription="carousel"
@@ -13,7 +14,6 @@ var g=`<div
     @keydown.left="$store.lightbox.prev(group)"
     @keydown.right="$store.lightbox.next(group)"
 >
-    <span x-text="group"></span>
     <ul aria-live="polite" role="presentation" id="lightbox-list">
         <template x-for="(item, index) in $store.lightbox.items[group]">
             <li
@@ -111,4 +111,4 @@ var g=`<div
         </svg>
     </a>
 </div>
-`;function p(e){let u=(Math.random()+1).toString(36).substring(7);e.store("lightbox",{show:{},items:{},touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t,s){if(!t.changedTouches||!this.touchStart)return;let{screenX:l,screenY:n}=this.touchStart,{screenX:h,screenY:c}=t.changedTouches[0];if(!l||!n||!h||!c)return;let i=l-h,o=n-c;Math.abs(i)<Math.abs(o)||(i>=100?this.next(s):i<=-100&&this.prev(s))},prev(t){let s=this.items[t].findIndex(l=>l.el===this.show[t].el);this.show[t]=s===0?this.items[t][this.items[t].length-1]:this.items[t][s-1]},next(t){let s=this.items[t].findIndex(l=>l.el===this.show[t].el);this.show[t]=s===this.items[t].length-1?this.items[t][0]:this.items[t][s+1]}}),e.directive("lightbox",(t,{modifiers:s,expression:l},{effect:n,evaluateLater:h})=>{if(!l){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let c=h(l);n(()=>{c(i=>{let o=i.group?String(i.group):u;if(!document.querySelector(`#lightbox-${o}`)){let r=document.createElement("template");r.innerHTML=g;let a=r.content.children[0];a.id=`lightbox-${o}`,a.setAttribute("x-data",`{ group: '${o}' }`),document.body.appendChild(a)}e.store("lightbox").show[o]===void 0&&(e.store("lightbox").show[o]=null),e.store("lightbox").items[o]??=[];let m=e.store("lightbox").items,d=e.store("lightbox").items[o]?.findIndex(r=>r.el===t),x=f(i,o,t);d!==-1&&d!==void 0?m[o][d]=x:m[o].push(x),t.addEventListener("click",r=>{r.preventDefault(),e.store("lightbox").show[o]=e.store("lightbox").items[o].find(a=>a.el===t)})})})})}var f=(e,u,t)=>(typeof e=="string"&&(e={url:e}),{el:t,type:"image",...e,group:u});var $=p;export{$ as default};
+`;function p(e){let u=(Math.random()+1).toString(36).substring(7);e.store("lightbox",{show:{},items:{},touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t,s){if(!t.changedTouches||!this.touchStart)return;let{screenX:i,screenY:n}=this.touchStart,{screenX:h,screenY:c}=t.changedTouches[0];if(!i||!n||!h||!c)return;let l=i-h,o=n-c;Math.abs(l)<Math.abs(o)||(l>=100?this.next(s):l<=-100&&this.prev(s))},prev(t){let s=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=s===0?this.items[t][this.items[t].length-1]:this.items[t][s-1]},next(t){let s=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=s===this.items[t].length-1?this.items[t][0]:this.items[t][s+1]}}),e.directive("lightbox",(t,{modifiers:s,expression:i},{effect:n,evaluateLater:h})=>{if(!i){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let c=h(i);n(()=>{c(l=>{let o=l.group?String(l.group):u;if(e.store("lightbox").show[o]===void 0&&(e.store("lightbox").show[o]=null),e.store("lightbox").items[o]??=[],!document.querySelector(`#lightbox-${o}`)){let r=document.createElement("template");r.innerHTML=g;let a=r.content.children[0];a.id=`lightbox-${o}`,a.setAttribute("x-data",`{ group: '${o}' }`),document.body.appendChild(a),e.initTree(a)}let m=e.store("lightbox").items,d=e.store("lightbox").items[o]?.findIndex(r=>r.el===t),x=f(l,o,t);d!==-1&&d!==void 0?m[o][d]=x:m[o].push(x),t.addEventListener("click",r=>{r.preventDefault(),e.store("lightbox").show[o]=e.store("lightbox").items[o].find(a=>a.el===t)})})})})}var f=(e,u,t)=>(typeof e=="string"&&(e={url:e}),{el:t,type:"image",...e,group:u});var L=p;export{L as default};

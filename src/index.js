@@ -65,6 +65,10 @@ export default function (Alpine) {
             evaluateConfig((config) => {
                 const group = config.group ? String(config.group) : defaultGroup
 
+                if (Alpine.store('lightbox').show[group] === undefined) Alpine.store('lightbox').show[group] = null
+
+                Alpine.store('lightbox').items[group] ??= [];
+
                 if (!document.querySelector(`#lightbox-${group}`)) {
                     const template = document.createElement('template')
                     template.innerHTML = html
@@ -74,11 +78,9 @@ export default function (Alpine) {
                     templateEl.setAttribute('x-data', `{ group: '${group}' }`)
 
                     document.body.appendChild(templateEl)
+
+                    Alpine.initTree(templateEl)
                 }
-
-                if (Alpine.store('lightbox').show[group] === undefined) Alpine.store('lightbox').show[group] = null
-
-                Alpine.store('lightbox').items[group] ??= [];
 
                 const items = Alpine.store('lightbox').items
                 const index = Alpine.store('lightbox').items[group]?.findIndex((item) => item.el === el)
