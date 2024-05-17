@@ -1,28 +1,29 @@
 <div
-    id="lightbox"
     class="fixed inset-0 bg-black/90 touch-pinch-zoom z-[9999]"
     role="region"
     aria-modal="true"
     aria-roledescription="carousel"
-    x-data
-    x-show="$store.lightbox.show"
+    x-show="$store.lightbox.show[group]"
     x-transition.opacity.duration.300ms
-    x-trap.noautofocus.noscroll="$store.lightbox.show"
-    :aria-hidden="!$store.lightbox.show"
+    x-trap.noscroll="$store.lightbox.show[group]"
+    :aria-hidden="!$store.lightbox.show[group]"
     @touchstart="$store.lightbox.onTouchStart($event)"
-    @touchend="$store.lightbox.onTouchEnd($event)"
-    @keydown.esc="$store.lightbox.show = null"
+    @touchend="$store.lightbox.onTouchEnd($event, group)"
+    @keydown.esc="$store.lightbox.show[group] = null"
+    @keydown.left="$store.lightbox.prev(group)"
+    @keydown.right="$store.lightbox.next(group)"
 >
+    <span x-text="group"></span>
     <ul aria-live="polite" role="presentation" id="lightbox-list">
-        <template x-for="(item, index) in $store.lightbox.items">
+        <template x-for="(item, index) in $store.lightbox.items[group]">
             <li
                 class="absolute inset-0 flex justify-center items-center"
                 role="group"
                 aria-roledescription="slide"
-                x-show="$store.lightbox.show?.el === item.el"
+                x-show="$store.lightbox.show[group]?.el === item.el"
                 x-transition.opacity.duration.300ms
-                :aria-label="`${index + 1} of ${$store.lightbox.items.length}`"
-                @click.self="$store.lightbox.show = null"
+                :aria-label="`${index + 1} of ${$store.lightbox.items[group].length}`"
+                @click.self="$store.lightbox.show[group] = null"
             >
                 <template x-if="item.type === 'image'">
                     <img class="w-auto h-auto max-h-screen max-w-screen" :src="item.url" :alt="item.alt || ''">
@@ -30,14 +31,25 @@
                 <template x-if="item.type === 'iframe'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
-                            <iframe class="absolute top-0 left-0 w-full h-full" allowfullscreen :src="item.url" :allow="item.autoplay && 'autoplay'"></iframe>
+                            <iframe
+                                class="absolute top-0 left-0 w-full h-full"
+                                allowfullscreen
+                                :src="item.url"
+                                :allow="item.autoplay && 'autoplay'"
+                            ></iframe>
                         </div>
                     </div>
                 </template>
                 <template x-if="item.type === 'video'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
-                            <video class="absolute top-0 left-0 w-full h-full" :src="item.url" controls playsinline :autoplay="item.autoplay"></video>
+                            <video
+                                class="absolute top-0 left-0 w-full h-full"
+                                :src="item.url"
+                                controls
+                                playsinline
+                                :autoplay="item.autoplay"
+                            ></video>
                         </div>
                     </div>
                 </template>
@@ -50,7 +62,7 @@
         role="button"
         aria-controls="lightbox-list"
         aria-label="Previous"
-        @click.prevent="$store.lightbox.prev()"
+        @click.prevent="$store.lightbox.prev(group)"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"
@@ -68,7 +80,7 @@
         role="button"
         aria-controls="lightbox-list"
         aria-label="Next"
-        @click.prevent="$store.lightbox.next()"
+        @click.prevent="$store.lightbox.next(group)"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"
@@ -86,7 +98,7 @@
         role="button"
         aria-controls="lightbox-list"
         aria-label="Close"
-        @click.prevent="$store.lightbox.show = null"
+        @click.prevent="$store.lightbox.show[group] = null"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"

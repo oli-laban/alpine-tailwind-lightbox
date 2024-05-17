@@ -1,28 +1,29 @@
-var u=`<div
-    id="lightbox"
+var g=`<div
     class="fixed inset-0 bg-black/90 touch-pinch-zoom z-[9999]"
     role="region"
     aria-modal="true"
     aria-roledescription="carousel"
-    x-data
-    x-show="$store.lightbox.show"
+    x-show="$store.lightbox.show[group]"
     x-transition.opacity.duration.300ms
-    x-trap.noautofocus.noscroll="$store.lightbox.show"
-    :aria-hidden="!$store.lightbox.show"
+    x-trap.noscroll="$store.lightbox.show[group]"
+    :aria-hidden="!$store.lightbox.show[group]"
     @touchstart="$store.lightbox.onTouchStart($event)"
-    @touchend="$store.lightbox.onTouchEnd($event)"
-    @keydown.esc="$store.lightbox.show = null"
+    @touchend="$store.lightbox.onTouchEnd($event, group)"
+    @keydown.esc="$store.lightbox.show[group] = null"
+    @keydown.left="$store.lightbox.prev(group)"
+    @keydown.right="$store.lightbox.next(group)"
 >
+    <span x-text="group"></span>
     <ul aria-live="polite" role="presentation" id="lightbox-list">
-        <template x-for="(item, index) in $store.lightbox.items">
+        <template x-for="(item, index) in $store.lightbox.items[group]">
             <li
                 class="absolute inset-0 flex justify-center items-center"
                 role="group"
                 aria-roledescription="slide"
-                x-show="$store.lightbox.show?.el === item.el"
+                x-show="$store.lightbox.show[group]?.el === item.el"
                 x-transition.opacity.duration.300ms
-                :aria-label="\`\${index + 1} of \${$store.lightbox.items.length}\`"
-                @click.self="$store.lightbox.show = null"
+                :aria-label="\`\${index + 1} of \${$store.lightbox.items[group].length}\`"
+                @click.self="$store.lightbox.show[group] = null"
             >
                 <template x-if="item.type === 'image'">
                     <img class="w-auto h-auto max-h-screen max-w-screen" :src="item.url" :alt="item.alt || ''">
@@ -30,14 +31,25 @@ var u=`<div
                 <template x-if="item.type === 'iframe'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
-                            <iframe class="absolute top-0 left-0 w-full h-full" allowfullscreen :src="item.url" :allow="item.autoplay && 'autoplay'"></iframe>
+                            <iframe
+                                class="absolute top-0 left-0 w-full h-full"
+                                allowfullscreen
+                                :src="item.url"
+                                :allow="item.autoplay && 'autoplay'"
+                            ></iframe>
                         </div>
                     </div>
                 </template>
                 <template x-if="item.type === 'video'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
-                            <video class="absolute top-0 left-0 w-full h-full" :src="item.url" controls playsinline :autoplay="item.autoplay"></video>
+                            <video
+                                class="absolute top-0 left-0 w-full h-full"
+                                :src="item.url"
+                                controls
+                                playsinline
+                                :autoplay="item.autoplay"
+                            ></video>
                         </div>
                     </div>
                 </template>
@@ -50,7 +62,7 @@ var u=`<div
         role="button"
         aria-controls="lightbox-list"
         aria-label="Previous"
-        @click.prevent="$store.lightbox.prev()"
+        @click.prevent="$store.lightbox.prev(group)"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"
@@ -68,7 +80,7 @@ var u=`<div
         role="button"
         aria-controls="lightbox-list"
         aria-label="Next"
-        @click.prevent="$store.lightbox.next()"
+        @click.prevent="$store.lightbox.next(group)"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"
@@ -86,7 +98,7 @@ var u=`<div
         role="button"
         aria-controls="lightbox-list"
         aria-label="Close"
-        @click.prevent="$store.lightbox.show = null"
+        @click.prevent="$store.lightbox.show[group] = null"
     >
         <svg
             class="w-4 h-4 md:w-5 md:h-5 fill-white"
@@ -99,4 +111,4 @@ var u=`<div
         </svg>
     </a>
 </div>
-`;function m(e){e.store("lightbox",{show:null,items:[],touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t){if(!t.changedTouches||!this.touchStart)return;let{screenX:l,screenY:s}=this.touchStart,{screenX:a,screenY:r}=t.changedTouches[0];if(!l||!s||!a||!r)return;let i=l-a,o=s-r;Math.abs(i)<Math.abs(o)||(i>=100?this.next():i<=-100&&this.prev())},prev(){let t=this.items.findIndex(l=>l.el===this.show.el);this.show=t===0?this.items[this.items.length-1]:this.items[t-1]},next(){let t=this.items.findIndex(l=>l.el===this.show.el);this.show=t===this.items.length-1?this.items[0]:this.items[t+1]}}),document.querySelector("#lightbox")||e.mutateDom(()=>{let t=document.createElement("template");t.innerHTML=u,document.body.appendChild(t.content.children[0])}),e.directive("lightbox",(t,{modifiers:l,expression:s},{effect:a,evaluateLater:r})=>{if(!s){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let i=r(s);a(()=>{i(o=>{let n=e.store("lightbox").items,h=e.store("lightbox").items.findIndex(d=>d.el===t),c=w(o,t);h!==-1?n[h]=c:n.push(c)})}),t.addEventListener("click",o=>{o.preventDefault(),e.store("lightbox").show=e.store("lightbox").items.find(n=>n.el===t)})})}var w=(e,t)=>(typeof e=="string"&&(e={url:e}),{el:t,type:"image",...e});var v=m;export{v as default};
+`;function p(e){let u=(Math.random()+1).toString(36).substring(7);e.store("lightbox",{show:{},items:{},touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t,s){if(!t.changedTouches||!this.touchStart)return;let{screenX:l,screenY:n}=this.touchStart,{screenX:h,screenY:c}=t.changedTouches[0];if(!l||!n||!h||!c)return;let i=l-h,o=n-c;Math.abs(i)<Math.abs(o)||(i>=100?this.next(s):i<=-100&&this.prev(s))},prev(t){let s=this.items[t].findIndex(l=>l.el===this.show[t].el);this.show[t]=s===0?this.items[t][this.items[t].length-1]:this.items[t][s-1]},next(t){let s=this.items[t].findIndex(l=>l.el===this.show[t].el);this.show[t]=s===this.items[t].length-1?this.items[t][0]:this.items[t][s+1]}}),e.directive("lightbox",(t,{modifiers:s,expression:l},{effect:n,evaluateLater:h})=>{if(!l){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let c=h(l);n(()=>{c(i=>{let o=i.group?String(i.group):u;if(!document.querySelector(`#lightbox-${o}`)){let r=document.createElement("template");r.innerHTML=g;let a=r.content.children[0];a.id=`lightbox-${o}`,a.setAttribute("x-data",`{ group: '${o}' }`),document.body.appendChild(a)}e.store("lightbox").show[o]===void 0&&(e.store("lightbox").show[o]=null),e.store("lightbox").items[o]??=[];let m=e.store("lightbox").items,d=e.store("lightbox").items[o]?.findIndex(r=>r.el===t),x=f(i,o,t);d!==-1&&d!==void 0?m[o][d]=x:m[o].push(x),t.addEventListener("click",r=>{r.preventDefault(),e.store("lightbox").show[o]=e.store("lightbox").items[o].find(a=>a.el===t)})})})})}var f=(e,u,t)=>(typeof e=="string"&&(e={url:e}),{el:t,type:"image",...e,group:u});var $=p;export{$ as default};
