@@ -116,16 +116,16 @@
                 <span x-text="show ? 'Hide' : 'View'">View</span>&nbsp;Code
             </button>
             <pre class="mt-5" x-show="show" x-cloak x-transition.scale.origin.top><code class="rounded p-4 language-html">&lt;div
-        class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
-        x-data=&quot;{
-        images: [
-            { url: &#39;./assets/1.jpg&#39;, thumb: &#39;./assets/1-thumb.jpg&#39; },
-            { url: &#39;./assets/2.jpg&#39;, thumb: &#39;./assets/2-thumb.jpg&#39; },
-            { url: &#39;./assets/3.jpg&#39;, thumb: &#39;./assets/3-thumb.jpg&#39; },
-            { url: &#39;./assets/4.jpg&#39;, thumb: &#39;./assets/4-thumb.jpg&#39; },
-        ],
-    }&quot;
-    &gt;
+    class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
+    x-data=&quot;{
+    images: [
+        { url: &#39;./assets/1.jpg&#39;, thumb: &#39;./assets/1-thumb.jpg&#39; },
+        { url: &#39;./assets/2.jpg&#39;, thumb: &#39;./assets/2-thumb.jpg&#39; },
+        { url: &#39;./assets/3.jpg&#39;, thumb: &#39;./assets/3-thumb.jpg&#39; },
+        { url: &#39;./assets/4.jpg&#39;, thumb: &#39;./assets/4-thumb.jpg&#39; },
+    ],
+}&quot;
+&gt;
     &lt;template x-for=&quot;image in images&quot;&gt;
         &lt;a
             href=&quot;#&quot;
@@ -194,34 +194,34 @@
                 <span x-text="show ? 'Hide' : 'View'">View</span>&nbsp;Code
             </button>
             <pre class="mt-5" x-show="show" x-cloak x-transition.scale.origin.top><code class="rounded p-4 language-html">&lt;div
-        class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
-        x-data=&quot;{
-        items: [
-            {
-                url: &#39;https://www.youtube.com/embed/7yLxxyzGiko?autoplay=1&amp;mute=1&#39;,
-                thumb: &#39;https://i.ytimg.com/vi/7yLxxyzGiko/hq720.jpg&#39;,
-                type: &#39;embed&#39;,
-            },
-            {
-                url: &#39;./assets/6.mp4&#39;,
-                thumb: &#39;./assets/6-thumb.jpg&#39;,
-                type: &#39;video&#39;,
-                autoplay: true,
-                muted: true,
-            },
-            {
-                url: &#39;./assets/7.jpg&#39;,
-                thumb: &#39;./assets/7-thumb.jpg&#39;,
-                alt: &#39;Black &amp; white cat on a bright yellow background&#39;,
-            },
-            {
-                url: &#39;./assets/8.jpg&#39;,
-                thumb: &#39;./assets/8-thumb.jpg&#39;,
-                alt: &#39;Close-up shot of a tabby cat\&#39;s face&#39;,
-            },
-        ],
-    }&quot;
-    &gt;
+    class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
+    x-data=&quot;{
+    items: [
+        {
+            url: &#39;https://www.youtube.com/embed/7yLxxyzGiko?autoplay=1&amp;mute=1&#39;,
+            thumb: &#39;https://i.ytimg.com/vi/7yLxxyzGiko/hq720.jpg&#39;,
+            type: &#39;embed&#39;,
+        },
+        {
+            url: &#39;./assets/6.mp4&#39;,
+            thumb: &#39;./assets/6-thumb.jpg&#39;,
+            type: &#39;video&#39;,
+            autoplay: true,
+            muted: true,
+        },
+        {
+            url: &#39;./assets/7.jpg&#39;,
+            thumb: &#39;./assets/7-thumb.jpg&#39;,
+            alt: &#39;Black &amp; white cat on a bright yellow background&#39;,
+        },
+        {
+            url: &#39;./assets/8.jpg&#39;,
+            thumb: &#39;./assets/8-thumb.jpg&#39;,
+            alt: &#39;Close-up shot of a tabby cat\&#39;s face&#39;,
+        },
+    ],
+}&quot;
+&gt;
     &lt;template x-for=&quot;item in items&quot;&gt;
         &lt;a
             href=&quot;#&quot;
