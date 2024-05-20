@@ -9,11 +9,23 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Alpine Tailwind Lightbox</title>
     <meta name="description" content="A simple lightbox for AlpineJS and Tailwind CSS projects.">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs-themes@1.0.0/kimbie.dark.css">
     <link rel="stylesheet" href="./style.css">
 
-    <script src="./dist/alpine-tailwind-lightbox.min.js"></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <script defer src="./dist/alpine-tailwind-lightbox.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script defer>
+        hljs.highlightAll();
+    </script>
 </head>
 <body class="bg-gray-800 min-h-screen text-white">
     <div class="container mx-auto px-4">
@@ -32,15 +44,49 @@
                 </a>
             </div>
         </div>
-        <h2 class="text-2xl mb-6">Simple Example - URLs only</h2>
+        <h2 class="text-xl mb-6">Basic usage:</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6">
+            <a
+                href="#"
+                class="aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity"
+                x-data="{ url: './assets/0.jpg', thumb: './assets/0-thumb.jpg' }"
+                x-lightbox="url"
+            >
+                <img class="flex-1 object-cover object-center" :src="thumb" alt="">
+            </a>
+        </div>
+        <div class="mb-10" x-data="{ show: false }">
+            <button type="button" class="inline-flex items-center px-6 py-3 bg-indigo-600 rounded-md" @click="show = !show">
+                <svg
+                    class="h-4 w-auto fill-white mr-4 rotate-0 transition-transform"
+                    :class="show && 'rotate-180'"
+                    viewBox="0 -0.5 17 17"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                    <path d="M10.106,12.69 C9.525,13.27 8.584,13.27 8.002,12.69 L1.561,6.246 C0.979,5.665 0.722,4.143 2.561,4.143 L15.549,4.143 C17.45,4.143 17.131,5.664 16.549,6.246 L10.106,12.69 L10.106,12.69 Z"/>
+                </svg>
+                <span x-text="show ? 'Hide' : 'View'">View</span>&nbsp;Code
+            </button>
+            <pre class="mt-5" x-show="show" x-cloak x-transition.scale.origin.top><code class="rounded p-4 language-html">&lt;a
+    href=&quot;#&quot;
+    class=&quot;aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity&quot;
+    x-data=&quot;{ url: &#39;./assets/0.jpg&#39;, thumb: &#39;./assets/0-thumb.jpg&#39; }&quot;
+    x-lightbox=&quot;url&quot;
+&gt;
+    &lt;img class=&quot;flex-1 object-cover object-center&quot; :src=&quot;thumb&quot; alt=&quot;&quot;&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+        <h2 class="text-xl mb-6">Multiple images in x-for:</h2>
         <div
-            class="grid grid-cols-6 gap-5"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6"
             x-data="{
                 images: [
-                    'https://images.unsplash.com/photo-1574231164645-d6f0e8553590',
-                    'https://images.unsplash.com/photo-1519052537078-e6302a4968d4',
-                    'https://images.unsplash.com/photo-1549545931-59bf067af9ab',
-                    'https://images.unsplash.com/photo-1560114928-40f1f1eb26a0',
+                    { url: './assets/1.jpg', thumb: './assets/1-thumb.jpg' },
+                    { url: './assets/2.jpg', thumb: './assets/2-thumb.jpg' },
+                    { url: './assets/3.jpg', thumb: './assets/3-thumb.jpg' },
+                    { url: './assets/4.jpg', thumb: './assets/4-thumb.jpg' },
                 ],
             }"
         >
@@ -48,11 +94,145 @@
                 <a
                     href="#"
                     class="aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity"
-                    x-lightbox="`${image}?w=1920`"
+                    x-lightbox="image.url"
+                    x-lightbox:group="multiple"
                 >
-                    <img class="flex-1 object-cover object-center" :src="`${image}?w=400`" alt="">
+                    <img class="flex-1 object-cover object-center" :src="image.thumb" alt="">
                 </a>
             </template>
+        </div>
+        <div class="mb-10" x-data="{ show: false }">
+            <button type="button" class="inline-flex items-center px-6 py-3 bg-indigo-600 rounded-md" @click="show = !show">
+                <svg
+                    class="h-4 w-auto fill-white mr-4 rotate-0 transition-transform"
+                    :class="show && 'rotate-180'"
+                    viewBox="0 -0.5 17 17"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                    <path d="M10.106,12.69 C9.525,13.27 8.584,13.27 8.002,12.69 L1.561,6.246 C0.979,5.665 0.722,4.143 2.561,4.143 L15.549,4.143 C17.45,4.143 17.131,5.664 16.549,6.246 L10.106,12.69 L10.106,12.69 Z"/>
+                </svg>
+                <span x-text="show ? 'Hide' : 'View'">View</span>&nbsp;Code
+            </button>
+            <pre class="mt-5" x-show="show" x-cloak x-transition.scale.origin.top><code class="rounded p-4 language-html">&lt;div
+        class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
+        x-data=&quot;{
+        images: [
+            { url: &#39;./assets/1.jpg&#39;, thumb: &#39;./assets/1-thumb.jpg&#39; },
+            { url: &#39;./assets/2.jpg&#39;, thumb: &#39;./assets/2-thumb.jpg&#39; },
+            { url: &#39;./assets/3.jpg&#39;, thumb: &#39;./assets/3-thumb.jpg&#39; },
+            { url: &#39;./assets/4.jpg&#39;, thumb: &#39;./assets/4-thumb.jpg&#39; },
+        ],
+    }&quot;
+    &gt;
+    &lt;template x-for=&quot;image in images&quot;&gt;
+        &lt;a
+            href=&quot;#&quot;
+            class=&quot;aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity&quot;
+            x-lightbox=&quot;image.url&quot;
+            x-lightbox:group=&quot;multiple&quot;
+        &gt;
+            &lt;img class=&quot;flex-1 object-cover object-center&quot; :src=&quot;image.thumb&quot; alt=&quot;&quot;&gt;
+        &lt;/a&gt;
+    &lt;/template&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <h2 class="text-xl mb-6">Using a config object for alt tags & videos:</h2>
+        <div
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6"
+            x-data="{
+                items: [
+                    {
+                        url: 'https://www.youtube.com/embed/7yLxxyzGiko?autoplay=1&mute=1',
+                        thumb: 'https://i.ytimg.com/vi/7yLxxyzGiko/hq720.jpg',
+                        type: 'embed',
+                    },
+                    {
+                        url: './assets/6.mp4',
+                        thumb: './assets/6-thumb.jpg',
+                        type: 'video',
+                        autoplay: true,
+                        muted: true,
+                    },
+                    {
+                        url: './assets/7.jpg',
+                        thumb: './assets/7-thumb.jpg',
+                        alt: 'Black & white cat on a bright yellow background',
+                    },
+                    {
+                        url: './assets/8.jpg',
+                        thumb: './assets/8-thumb.jpg',
+                        alt: 'Close-up shot of a tabby cat\'s face',
+                    },
+                ],
+            }"
+        >
+            <template x-for="item in items">
+                <a
+                    href="#"
+                    class="aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity"
+                    x-lightbox="item"
+                    x-lightbox:group="config"
+                >
+                    <img class="flex-1 object-cover object-center" :src="item.thumb" :alt="item.alt">
+                </a>
+            </template>
+        </div>
+        <div class="mb-10" x-data="{ show: false }">
+            <button type="button" class="inline-flex items-center px-6 py-3 bg-indigo-600 rounded-md" @click="show = !show">
+                <svg
+                    class="h-4 w-auto fill-white mr-4 rotate-0 transition-transform"
+                    :class="show && 'rotate-180'"
+                    viewBox="0 -0.5 17 17"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                    <path d="M10.106,12.69 C9.525,13.27 8.584,13.27 8.002,12.69 L1.561,6.246 C0.979,5.665 0.722,4.143 2.561,4.143 L15.549,4.143 C17.45,4.143 17.131,5.664 16.549,6.246 L10.106,12.69 L10.106,12.69 Z"/>
+                </svg>
+                <span x-text="show ? 'Hide' : 'View'">View</span>&nbsp;Code
+            </button>
+            <pre class="mt-5" x-show="show" x-cloak x-transition.scale.origin.top><code class="rounded p-4 language-html">&lt;div
+        class=&quot;grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-6&quot;
+        x-data=&quot;{
+        items: [
+            {
+                url: &#39;https://www.youtube.com/embed/7yLxxyzGiko?autoplay=1&amp;mute=1&#39;,
+                thumb: &#39;https://i.ytimg.com/vi/7yLxxyzGiko/hq720.jpg&#39;,
+                type: &#39;embed&#39;,
+            },
+            {
+                url: &#39;./assets/6.mp4&#39;,
+                thumb: &#39;./assets/6-thumb.jpg&#39;,
+                type: &#39;video&#39;,
+                autoplay: true,
+                muted: true,
+            },
+            {
+                url: &#39;./assets/7.jpg&#39;,
+                thumb: &#39;./assets/7-thumb.jpg&#39;,
+                alt: &#39;Black &amp; white cat on a bright yellow background&#39;,
+            },
+            {
+                url: &#39;./assets/8.jpg&#39;,
+                thumb: &#39;./assets/8-thumb.jpg&#39;,
+                alt: &#39;Close-up shot of a tabby cat\&#39;s face&#39;,
+            },
+        ],
+    }&quot;
+    &gt;
+    &lt;template x-for=&quot;item in items&quot;&gt;
+        &lt;a
+            href=&quot;#&quot;
+            class=&quot;aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity&quot;
+            x-lightbox=&quot;item&quot;
+            x-lightbox:group=&quot;config&quot;
+        &gt;
+            &lt;img class=&quot;flex-1 object-cover object-center&quot; :src=&quot;item.thumb&quot; :alt=&quot;item.alt&quot;&gt;
+        &lt;/a&gt;
+    &lt;/template&gt;
+&lt;/div&gt;</code></pre>
         </div>
     </div>
 </body>
