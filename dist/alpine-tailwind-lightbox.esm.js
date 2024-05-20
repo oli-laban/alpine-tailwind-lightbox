@@ -1,4 +1,4 @@
-var g=`<div
+var x=`<div
     class="fixed inset-0 bg-black/90 touch-pinch-zoom z-[9999]"
     style="display: none;"
     role="region"
@@ -71,6 +71,7 @@ var g=`<div
         role="button"
         aria-controls="lightbox-list"
         aria-label="Previous"
+        x-show="$store.lightbox.items[group].length > 1"
         @click.prevent="$store.lightbox.prev(group)"
     >
         <svg
@@ -89,6 +90,7 @@ var g=`<div
         role="button"
         aria-controls="lightbox-list"
         aria-label="Next"
+        x-show="$store.lightbox.items[group].length > 1"
         @click.prevent="$store.lightbox.next(group)"
     >
         <svg
@@ -120,4 +122,4 @@ var g=`<div
         </svg>
     </a>
 </div>
-`;var p=null;function w(e){e.store("lightbox",{show:{},items:{},touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t,o){if(!t.changedTouches||!this.touchStart)return;let{screenX:i,screenY:a}=this.touchStart,{screenX:h,screenY:u}=t.changedTouches[0];if(!i||!a||!h||!u)return;let n=i-h,c=a-u;Math.abs(n)<Math.abs(c)||(n>=100?this.next(o):n<=-100&&this.prev(o))},prev(t){let o=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=o===0?this.items[t][this.items[t].length-1]:this.items[t][o-1]},next(t){let o=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=o===this.items[t].length-1?this.items[t][0]:this.items[t][o+1]}}),e.directive("lightbox",(t,{value:o,modifiers:i,expression:a},{effect:h,evaluateLater:u})=>{if(o==="group")return;if(!a){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let n=u(a);h(()=>{n(c=>{let s=b(t,c);if(e.store("lightbox").show[s]===void 0&&(e.store("lightbox").show[s]=null),e.store("lightbox").items[s]??=[],!document.querySelector(`#lightbox-${s}`)){let r=document.createElement("template");r.innerHTML=g;let l=r.content.children[0];l.id=`lightbox-${s}`,l.setAttribute("x-data",`{ group: '${s}' }`),document.body.appendChild(l),setTimeout(()=>{l.hasOwnProperty("_x_isShown")||e.initTree(l)},15)}let m=e.store("lightbox").items,d=e.store("lightbox").items[s]?.findIndex(r=>r.el===t),x=v(c,s,t);d!==-1&&d!==void 0?m[s][d]=x:m[s].push(x),t.addEventListener("click",r=>{r.preventDefault(),e.store("lightbox").show[s]=e.store("lightbox").items[s].find(l=>l.el===t)})})})})}var b=(e,t)=>e.hasAttribute("x-lightbox:group")?e.getAttribute("x-lightbox:group"):t.group?String(t.group):(p??=(Math.random()+1).toString(36).substring(7),p),v=(e,t,o)=>(typeof e=="string"&&(e={url:e}),{el:o,type:"image",autoplay:!1,muted:!1,...e,group:t});var k=w;export{k as default};
+`;var p=null;function w(e){e.store("lightbox",{show:{},items:{},touchStart:null,onTouchStart(t){if(!t.changedTouches){this.touchStart=null;return}this.touchStart=t.changedTouches[0]},onTouchEnd(t,o){if(!t.changedTouches||!this.touchStart)return;let{screenX:i,screenY:a}=this.touchStart,{screenX:h,screenY:u}=t.changedTouches[0];if(!i||!a||!h||!u)return;let n=i-h,c=a-u;Math.abs(n)<Math.abs(c)||(n>=100?this.next(o):n<=-100&&this.prev(o))},prev(t){let o=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=o===0?this.items[t][this.items[t].length-1]:this.items[t][o-1]},next(t){let o=this.items[t].findIndex(i=>i.el===this.show[t].el);this.show[t]=o===this.items[t].length-1?this.items[t][0]:this.items[t][o+1]}}),e.directive("lightbox",(t,{value:o,modifiers:i,expression:a},{effect:h,evaluateLater:u})=>{if(o==="group")return;if(!a){console.warn("Alpine warn: no url or config expression passed to x-lightbox",t);return}let n=u(a);h(()=>{n(c=>{let s=b(t,c);if(e.store("lightbox").show[s]===void 0&&(e.store("lightbox").show[s]=null),e.store("lightbox").items[s]??=[],!document.querySelector(`#lightbox-${s}`)){let r=document.createElement("template");r.innerHTML=x;let l=r.content.children[0];l.id=`lightbox-${s}`,l.setAttribute("x-data",`{ group: '${s}' }`),document.body.appendChild(l),setTimeout(()=>{l.hasOwnProperty("_x_isShown")||e.initTree(l)},15)}let m=e.store("lightbox").items,d=e.store("lightbox").items[s]?.findIndex(r=>r.el===t),g=v(c,s,t);d!==-1&&d!==void 0?m[s][d]=g:m[s].push(g),t.addEventListener("click",r=>{r.preventDefault(),e.store("lightbox").show[s]=e.store("lightbox").items[s].find(l=>l.el===t)})})})})}var b=(e,t)=>e.hasAttribute("x-lightbox:group")?e.getAttribute("x-lightbox:group"):t.group?String(t.group):(p??=(Math.random()+1).toString(36).substring(7),p),v=(e,t,o)=>(typeof e=="string"&&(e={url:e}),{el:o,type:"image",autoplay:!1,muted:!1,...e,group:t});var k=w;export{k as default};
