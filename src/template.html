@@ -71,6 +71,7 @@
         role="button"
         aria-controls="lightbox-list"
         aria-label="Previous"
+        x-show="$store.lightbox.items[group].length > 1"
         @click.prevent="$store.lightbox.prev(group)"
     >
         <svg
@@ -89,6 +90,7 @@
         role="button"
         aria-controls="lightbox-list"
         aria-label="Next"
+        x-show="$store.lightbox.items[group].length > 1"
         @click.prevent="$store.lightbox.next(group)"
     >
         <svg
