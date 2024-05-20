@@ -1,12 +1,18 @@
 {
   "name": "alpine-tailwind-lightbox",
   "description": "A simple lightbox for AlpineJS and Tailwind CSS projects.",
+  "homepage": "https://github.com/oli-laban/alpine-tailwind-lightbox",
   "keywords": [
     "Alpine",
     "Alpine JS",
     "Lightbox"
   ],
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oli-laban/alpine-tailwind-lightbox.git"
+  },
+  "license": "MIT",
   "module": "./dist/alpine-tailwind-lightbox.esm.js",
   "browser": "./dist/alpine-tailwind-lightbox.min.js",
   "scripts": {
