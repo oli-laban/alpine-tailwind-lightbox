@@ -7,12 +7,6 @@
     "Lightbox"
   ],
   "version": "0.0.1",
-  "exports": {
-    ".": {
-      "import": "./dist/main.es.js",
-      "require": "./dist/main.cjs.js"
-    }
-  },
   "module": "./dist/alpine-tailwind-lightbox.esm.js",
   "browser": "./dist/alpine-tailwind-lightbox.min.js",
   "scripts": {
