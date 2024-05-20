@@ -1,8 +1,8 @@
 import html from './template.html'
 
-export default function (Alpine) {
-    const defaultGroup = (Math.random() + 1).toString(36).substring(7)
+let defaultGroup = null
 
+export default function (Alpine) {
     Alpine.store('lightbox', {
         show: {},
         items: {},
@@ -52,7 +52,11 @@ export default function (Alpine) {
         },
     })
 
-    Alpine.directive('lightbox', (el, { modifiers, expression }, { effect, evaluateLater }) => {
+    Alpine.directive('lightbox', (el, { value, modifiers, expression }, { effect, evaluateLater }) => {
+        if (value === 'group') {
+            return
+        }
+
         if (!expression) {
             console.warn('Alpine warn: no url or config expression passed to x-lightbox', el)
 
@@ -63,7 +67,7 @@ export default function (Alpine) {
 
         effect(() => {
             evaluateConfig((config) => {
-                const group = config.group ? String(config.group) : defaultGroup
+                const group = getGroupName(el, config)
 
                 if (Alpine.store('lightbox').show[group] === undefined) Alpine.store('lightbox').show[group] = null
 
@@ -79,7 +83,11 @@ export default function (Alpine) {
 
                     document.body.appendChild(templateEl)
 
-                    Alpine.initTree(templateEl)
+                    setTimeout(() => {
+                        if (!templateEl.hasOwnProperty('_x_isShown')) {
+                            Alpine.initTree(templateEl)
+                        }
+                    }, 15)
                 }
 
                 const items = Alpine.store('lightbox').items
@@ -104,8 +112,27 @@ export default function (Alpine) {
     })
 }
 
+const getGroupName = (el, config) => {
+    if (el.hasAttribute('x-lightbox:group')) {
+        return el.getAttribute('x-lightbox:group')
+    }
+
+    if (config.group) return String(config.group)
+
+    defaultGroup ??= (Math.random() + 1).toString(36).substring(7)
+
+    return defaultGroup
+}
+
 const mergeConfig = (config, group, el) => {
     if (typeof config === 'string') config = { url: config }
 
-    return { el, type: 'image', ...config, group: group }
+    return {
+        el,
+        type: 'image',
+        autoplay: false,
+        muted: false,
+        ...config,
+        group: group,
+    }
 }

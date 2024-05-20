@@ -28,14 +28,13 @@
                 <template x-if="item.type === 'image'">
                     <img class="w-auto h-auto max-h-screen max-w-screen" :src="item.url" :alt="item.alt || ''">
                 </template>
-                <template x-if="item.type === 'iframe'">
+                <template x-if="item.type === 'embed'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
                             <iframe
                                 class="absolute top-0 left-0 w-full h-full"
                                 allowfullscreen
                                 :src="item.url"
-                                :allow="item.autoplay && 'autoplay'"
                             ></iframe>
                         </div>
                     </div>
@@ -48,7 +47,17 @@
                                 :src="item.url"
                                 controls
                                 playsinline
-                                :autoplay="item.autoplay"
+                                x-data="{
+                                    setAttr(attr, val) {
+                                        $el[attr] = val
+                                    }
+                                }"
+                                x-init="
+                                    setAttr('autoplay', item.autoplay)
+                                    setAttr('muted', item.muted)
+                                    $watch('item.autoplay', (val) => setAttr('autoplay', val))
+                                    $watch('item.muted', (val) => setAttr('muted', val))
+                                "
                             ></video>
                         </div>
                     </div>
