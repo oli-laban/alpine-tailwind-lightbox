@@ -14,7 +14,7 @@ A simple lightbox for AlpineJS and Tailwind CSS projects.
 
 ```html
 <!-- Lightbox Plugin -->
-<script defer src="TODO"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpine-tailwind-lightbox@1.x.x/dist/alpine-tailwind-lightbox.min.js"></script>
 
 <!-- Focus Plugin -->
 <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
