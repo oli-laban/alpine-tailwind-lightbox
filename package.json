@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "module": "./dist/alpine-tailwind-lightbox.esm.js",
-  "browser": "./dist/alpine-tailwind-lightbox.min.js",
+  "main": "./src/index.js",
   "scripts": {
     "build": "node ./scripts/build.js"
   },
