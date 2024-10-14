@@ -20,7 +20,7 @@
                 class="absolute inset-0 flex justify-center items-center"
                 role="group"
                 aria-roledescription="slide"
-                x-show="$store.lightbox.show[group]?.el === item.el"
+                x-show="$store.lightbox.show[group]?.id === item.id"
                 x-transition.opacity.duration.300ms
                 :aria-label="`${index + 1} of ${$store.lightbox.items[group].length}`"
                 @click.self="$store.lightbox.show[group] = null"
