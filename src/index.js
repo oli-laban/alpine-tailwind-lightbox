@@ -1,6 +1,7 @@
 import html from './template.html'
 
 let defaultGroup = null
+const lazyLoadedImages = []
 
 export default function (Alpine) {
     Alpine.store('lightbox', {
@@ -36,19 +37,61 @@ export default function (Alpine) {
                 this.prev(group)
             }
         },
-        prev(group) {
-            const current = this.items[group].findIndex((item) => item.el === this.show[group].el)
+        loadImage(item, group) {
+            const index = this.items[group].findIndex(({ id }) => id === item.id)
+            const items = [item, this.nextItem(index, group), this.prevItem(index, group)]
 
-            this.show[group] = current === 0
+            items.filter(Boolean).forEach(({ id, url, loaded }) => {
+                if (loaded) return
+
+                const image = new Image()
+
+                image.onload = () => {
+                    const loadedIndex = this.items[group].findIndex((current) => current.id === id)
+
+                    this.items[group][loadedIndex].loaded = true
+
+                    lazyLoadedImages.push(image)
+                }
+                image.src = url
+            })
+        },
+        open(urlOrRef, group) {
+            const item = this.items[group].find(
+                (item) => item[typeof urlOrRef === 'object' ? 'el' : 'url'] === urlOrRef,
+            )
+
+            if (item) {
+                this.show[group] = item
+
+                this.loadImage(item, group)
+            }
+        },
+        prevItem(index, group) {
+            return index === 0
                 ? this.items[group][this.items[group].length - 1]
-                : this.items[group][current - 1]
+                : this.items[group][index - 1]
+        },
+        nextItem(index, group) {
+            return index === this.items[group].length - 1
+                ? this.items[group][0]
+                : this.items[group][index + 1]
+        },
+        navigate(direction, group) {
+            const current = this.items[group].findIndex((item) => item.el === this.show[group].el)
+            const newCurrent = direction === 'prev'
+                ? this.prevItem(current, group)
+                : this.nextItem(current, group)
+
+            this.show[group] = newCurrent
+
+            this.loadImage(newCurrent, group)
+        },
+        prev(group) {
+            this.navigate('prev', group)
         },
         next(group) {
-            const current = this.items[group].findIndex((item) => item.el === this.show[group].el)
-
-            this.show[group] = current === this.items[group].length - 1
-                ? this.items[group][0]
-                : this.items[group][current + 1]
+            this.navigate('next', group)
         },
     })
 
@@ -64,53 +107,64 @@ export default function (Alpine) {
         }
 
         const evaluateConfig = evaluateLater(expression)
+        const elementId = getRandomId()
+        let hasListener = false
 
-        effect(() => {
-            evaluateConfig((config) => {
-                const group = getGroupName(el, config)
+        function updateLightbox(config) {
+            const group = getGroupName(el, config)
 
-                if (Alpine.store('lightbox').show[group] === undefined) Alpine.store('lightbox').show[group] = null
+            if (!document.querySelector(`#lightbox-${group}`)) {
+                const template = document.createElement('template')
+                template.innerHTML = html
 
-                Alpine.store('lightbox').items[group] ??= [];
+                const templateEl = template.content.children[0]
+                templateEl.id = `lightbox-${group}`
+                templateEl.setAttribute('x-data', `{ group: '${group}' }`)
 
-                if (!document.querySelector(`#lightbox-${group}`)) {
-                    const template = document.createElement('template')
-                    template.innerHTML = html
+                document.body.appendChild(templateEl)
 
-                    const templateEl = template.content.children[0]
-                    templateEl.id = `lightbox-${group}`
-                    templateEl.setAttribute('x-data', `{ group: '${group}' }`)
+                setTimeout(() => {
+                    if (!templateEl.hasOwnProperty('_x_isShown')) {
+                        Alpine.initTree(templateEl)
+                    }
+                }, 15)
+            }
 
-                    document.body.appendChild(templateEl)
+            Alpine.store('lightbox').show[group] ??= null;
+            Alpine.store('lightbox').items[group] ??= [];
 
-                    setTimeout(() => {
-                        if (!templateEl.hasOwnProperty('_x_isShown')) {
-                            Alpine.initTree(templateEl)
-                        }
-                    }, 15)
-                }
+            const items = Alpine.store('lightbox').items
+            const index = Alpine.store('lightbox').items[group]?.findIndex((item) => item.el === el)
+            const data = mergeConfig(config, group, el, elementId, modifiers)
 
-                const items = Alpine.store('lightbox').items
-                const index = Alpine.store('lightbox').items[group]?.findIndex((item) => item.el === el)
-                const data = mergeConfig(config, group, el)
+            if (index !== -1 && index !== undefined) {
+                items[group][index] = { ...items[group][index], ...data }
+            } else {
+                data.loaded = !data.lazy
 
-                if (index !== -1 && index !== undefined) {
-                    items[group][index] = data
-                } else {
-                    items[group].push(data)
-                }
+                items[group].push(data)
+            }
 
+            if (!hasListener) {
                 el.addEventListener('click', (event) => {
                     event.preventDefault()
 
-                    Alpine.store('lightbox').show[group] = Alpine.store('lightbox')
-                        .items[group]
-                        .find((item) => item.el === el)
+                    Alpine.store('lightbox').open(el, group)
                 })
+
+                hasListener = true
+            }
+        }
+
+        effect(() => {
+            evaluateConfig((config) => {
+                Alpine.nextTick(() => updateLightbox(config))
             })
         })
     })
 }
+
+const getRandomId = () => (Math.random() + 1).toString(36).substring(2, 15)
 
 const getGroupName = (el, config) => {
     if (el.hasAttribute('x-lightbox:group')) {
@@ -119,20 +173,22 @@ const getGroupName = (el, config) => {
 
     if (config.group) return String(config.group)
 
-    defaultGroup ??= (Math.random() + 1).toString(36).substring(7)
+    defaultGroup ??= getRandomId()
 
     return defaultGroup
 }
 
-const mergeConfig = (config, group, el) => {
+const mergeConfig = (config, group, el, id, modifiers) => {
     if (typeof config === 'string') config = { url: config }
 
     return {
-        el,
         type: 'image',
+        lazy: modifiers.includes('lazy'),
         autoplay: false,
         muted: false,
         ...config,
-        group: group,
+        el,
+        id,
+        group,
     }
 }
