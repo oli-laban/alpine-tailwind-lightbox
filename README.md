@@ -66,7 +66,7 @@ You can create a lightbox by simply passing a URL to the `x-lightbox` directive.
 
 ```html
 <a href="#" x-lightbox="'./image.jpg'">
-    Click Me
+    Open Image
 </a>
 ```
 
@@ -110,6 +110,10 @@ By default, all images will be fetched in the background on page load. To only f
 
 For smoother navigation between images, when an image is opened this will also load the previous and next image in the lightbox.
 
+#### Programmatic Creation
+
+It is possible to create a lightbox without needing a DOM element per item. See [Magics](#magics).
+
 ## Config Object
 
 #### `url` - String (Required)
@@ -124,7 +128,7 @@ Default: `image`
 
 #### `group` - String
 
-The lightbox group the item should be added to. If the `x-lightbox:group` attribute is used, that will take precedence. Any items without a specified group will be added to their own group.
+The lightbox group the item should be added to. If the `x-lightbox:group` attribute is used, that will take precedence. Any items without a specified group will be added to their own default group.
 
 Default: `none`
 
@@ -146,3 +150,41 @@ Only applies to the `video` type. Determines whether the video should play autom
 
 Default: `false`
 
+## Magics
+
+There are magic functions available for controlling lightboxes programmatically.
+
+### `$lightbox(items, group)`
+
+#### Arguments
+
+* `items`: **String[] | Object[]** - An array of URLs or config objects.
+* `group`: **String** (optional) - The name of the lightbox group. Can be omitted to use the default group.
+
+#### Example Usage
+
+```html
+<div
+    x-data="{ images: ['./image1.jpg', './image2.jpg', './image3.jpg'] }"
+    x-init="$lightbox(images)"
+></div>
+```
+
+> If there are also lightbox items created via `x-lightbox` targeting the same group (default or named), the items will be merged.
+
+### `$lightbox.open(urlOrRef, group)`
+
+#### Arguments
+
+* `items`: **String | HTMLElement** - A URL or element ref of the item to open. If omitted, the first item will be opened.
+* `group`: **String** (Optional) - The name of the lightbox group. Can be omitted to use the default group.
+
+#### Example Usage
+
+```html
+<img src="#" x-lightbox="'./image.jpg'" x-ref="image" alt="Example image">
+
+<a href="#" @click="$lightbox.open('./image.jpg')">Open Image</a>
+or
+<a href="#" @click="$lightbox.open($refs.image)">Open Image</a>
+```

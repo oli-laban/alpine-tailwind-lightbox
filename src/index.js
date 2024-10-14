@@ -56,10 +56,11 @@ export default function (Alpine) {
                 image.src = url
             })
         },
-        open(urlOrRef, group) {
-            const item = this.items[group].find(
-                (item) => item[typeof urlOrRef === 'object' ? 'el' : 'url'] === urlOrRef,
-            )
+        open(group, urlOrRef) {
+            const item = urlOrRef
+                ? this.items[group]
+                    .find((item) => item[typeof urlOrRef === 'object' ? 'el' : 'url'] === urlOrRef)
+                : (this.items[group][0] || null)
 
             if (item) {
                 this.show[group] = item
@@ -78,7 +79,7 @@ export default function (Alpine) {
                 : this.items[group][index + 1]
         },
         navigate(direction, group) {
-            const current = this.items[group].findIndex((item) => item.el === this.show[group].el)
+            const current = this.items[group].findIndex((item) => item.id === this.show[group].id)
             const newCurrent = direction === 'prev'
                 ? this.prevItem(current, group)
                 : this.nextItem(current, group)
@@ -95,6 +96,65 @@ export default function (Alpine) {
         },
     })
 
+    function createOrUpdateLightbox(items, group, id = null, el = null, modifiers = []) {
+        if (!Array.isArray(items)) items = [items]
+
+        if (!document.querySelector(`#lightbox-${group}`)) {
+            const template = document.createElement('template')
+            template.innerHTML = html
+
+            const templateEl = template.content.children[0]
+            templateEl.id = `lightbox-${group}`
+            templateEl.setAttribute('x-data', `{ group: '${group}' }`)
+
+            document.body.appendChild(templateEl)
+
+            setTimeout(() => {
+                if (!templateEl.hasOwnProperty('_x_isShown')) {
+                    Alpine.initTree(templateEl)
+                }
+            }, 15)
+        }
+
+        Alpine.store('lightbox').show[group] ??= null;
+        Alpine.store('lightbox').items[group] ??= [];
+
+        const existingItems = Alpine.store('lightbox').items
+
+        items.forEach((config) => {
+            const index = Alpine.store('lightbox').items[group]?.findIndex((item) => item.id === id)
+            const data = mergeConfig(config, group, id, el, modifiers)
+
+            if (index !== -1 && index !== undefined) {
+                existingItems[group][index] = { ...existingItems[group][index], ...data }
+            } else {
+                data.loaded = !data.lazy
+
+                existingItems[group].push(data)
+            }
+        })
+    }
+
+    Alpine.magic('lightbox', () => {
+        function register(items, group = null) {
+            items = items.map((item) => {
+                if (typeof item === 'string') item = { url: item }
+
+                item.id = getRandomId()
+
+                return item
+            })
+
+            createOrUpdateLightbox(items, group || getDefaultGroupName())
+        }
+
+        register.open = (urlOrRef = null, group = null) => {
+            Alpine.store('lightbox').open(group || getDefaultGroupName(), urlOrRef)
+        }
+
+        return register
+    })
+
     Alpine.directive('lightbox', (el, { value, modifiers, expression }, { effect, evaluateLater }) => {
         if (value === 'group') {
             return
@@ -107,58 +167,26 @@ export default function (Alpine) {
         }
 
         const evaluateConfig = evaluateLater(expression)
-        const elementId = getRandomId()
+        const id = getRandomId()
         let hasListener = false
-
-        function updateLightbox(config) {
-            const group = getGroupName(el, config)
-
-            if (!document.querySelector(`#lightbox-${group}`)) {
-                const template = document.createElement('template')
-                template.innerHTML = html
-
-                const templateEl = template.content.children[0]
-                templateEl.id = `lightbox-${group}`
-                templateEl.setAttribute('x-data', `{ group: '${group}' }`)
-
-                document.body.appendChild(templateEl)
-
-                setTimeout(() => {
-                    if (!templateEl.hasOwnProperty('_x_isShown')) {
-                        Alpine.initTree(templateEl)
-                    }
-                }, 15)
-            }
-
-            Alpine.store('lightbox').show[group] ??= null;
-            Alpine.store('lightbox').items[group] ??= [];
-
-            const items = Alpine.store('lightbox').items
-            const index = Alpine.store('lightbox').items[group]?.findIndex((item) => item.el === el)
-            const data = mergeConfig(config, group, el, elementId, modifiers)
-
-            if (index !== -1 && index !== undefined) {
-                items[group][index] = { ...items[group][index], ...data }
-            } else {
-                data.loaded = !data.lazy
-
-                items[group].push(data)
-            }
-
-            if (!hasListener) {
-                el.addEventListener('click', (event) => {
-                    event.preventDefault()
-
-                    Alpine.store('lightbox').open(el, group)
-                })
-
-                hasListener = true
-            }
-        }
 
         effect(() => {
             evaluateConfig((config) => {
-                Alpine.nextTick(() => updateLightbox(config))
+                Alpine.nextTick(() => {
+                    const group = getGroupName(el, config)
+
+                    createOrUpdateLightbox(config, group, id, el, modifiers)
+
+                    if (!hasListener) {
+                        el.addEventListener('click', (event) => {
+                            event.preventDefault()
+
+                            Alpine.store('lightbox').open(group, el)
+                        })
+
+                        hasListener = true
+                    }
+                })
             })
         })
     })
@@ -173,12 +201,16 @@ const getGroupName = (el, config) => {
 
     if (config.group) return String(config.group)
 
+    return getDefaultGroupName()
+}
+
+const getDefaultGroupName = () => {
     defaultGroup ??= getRandomId()
 
     return defaultGroup
 }
 
-const mergeConfig = (config, group, el, id, modifiers) => {
+const mergeConfig = (config, group, id = null, el = null, modifiers = []) => {
     if (typeof config === 'string') config = { url: config }
 
     return {
@@ -186,9 +218,9 @@ const mergeConfig = (config, group, el, id, modifiers) => {
         lazy: modifiers.includes('lazy'),
         autoplay: false,
         muted: false,
+        id,
         ...config,
         el,
-        id,
         group,
     }
 }
