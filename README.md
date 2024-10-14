@@ -98,6 +98,18 @@ By default, all items will be added to the same lightbox. If you want to create 
 </a>
 ```
 
+#### Lazy Loading Images
+
+By default, all images will be fetched in the background on page load. To only fetch an image when it is opened, use the `lazy` modifier (or the `lazy` config property):
+
+```html
+<a href="#" x-lightbox.lazy="'./cat.jpg'" x-lightbox:group="cats">
+    Open Image
+</a>
+```
+
+For smoother navigation between images, when an image is opened this will also load the previous and next image in the lightbox.
+
 ## Config Object
 
 #### `url` - String (Required)
@@ -115,6 +127,12 @@ Default: `image`
 The lightbox group the item should be added to. If the `x-lightbox:group` attribute is used, that will take precedence. Any items without a specified group will be added to their own group.
 
 Default: `none`
+
+#### `lazy` - Boolean
+
+Indicates whether to delay the fetching of images until they are opened.
+
+Default: `false` (or `true` if `lazy` modifier is provided)
 
 #### `muted` - Boolean
 
