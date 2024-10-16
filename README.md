@@ -1,4 +1,9 @@
-# Alpine Tailwind Lightbox
+<p align="center"><a href="https://github.com/oli-laban/alpine-tailwind-lightbox" target="_blank"><img src="https://github.com/user-attachments/assets/64877663-c59b-487d-af6b-5f0eead401bf" width="500" alt="Alpine Tailwind Lightbox"></a></p>
+
+<p align="center">
+<a href="https://www.npmjs.com/package/alpine-tailwind-lightbox"><img src="https://img.shields.io/npm/v/alpine-tailwind-lightbox" alt="Latest Stable Version"></a>
+<a href="https://www.npmjs.com/package/alpine-tailwind-lightbox"><img src="https://img.shields.io/npm/l/alpine-tailwind-lightbox" alt="License"></a>
+</p>
 
 A simple lightbox for AlpineJS and Tailwind CSS projects.
 
@@ -7,6 +12,15 @@ A simple lightbox for AlpineJS and Tailwind CSS projects.
 * [AlpineJS 3.x](https://alpinejs.dev/essentials/installation)
 * [AlpineJS Focus Plugin](https://alpinejs.dev/plugins/focus)
 * [Tailwind CSS](https://tailwindcss.com/docs/installation)
+
+### Table of Contents
+
+* [Installation](#installation)
+* [Demo](#demo)
+* [Usage](#usage)
+* [Config Object](#config-object)
+* [Magics](#magics)
+* [License](#license)
 
 ## Installation
 
@@ -51,10 +65,10 @@ Make sure Tailwind can pick up the CSS classes by adding the lightbox HTML to yo
 ```js
 module.exports = {
     content: [
-        ...
+        // ...
         './node_modules/alpine-tailwind-lightbox/src/template.html',
     ],
-    ...
+    // ...
 }
 ```
 ## Demo
@@ -86,7 +100,7 @@ For more options, you can pass an object to the lightbox (see the [Config Object
 
 #### Lightbox Groups
 
-By default, all items will be added to the same lightbox. If you want to create separate lightbox instances on the same page, you can specify a group:
+By default, all items will be added to the same "default" lightbox. If you want to create separate lightbox instances on the same page, you can specify a group:
 
 ```html
 <a href="#" x-lightbox="'./cat.jpg'" x-lightbox:group="cats">
@@ -116,39 +130,14 @@ It is possible to create a lightbox without needing a DOM element per item. See 
 
 ## Config Object
 
-#### `url` - String (Required)
-
-The URL to the image or video.
-
-#### `type` - String
-
-The media type. Either `image`, `video` or `embed`.
-
-Default: `image`
-
-#### `group` - String
-
-The lightbox group the item should be added to. If the `x-lightbox:group` attribute is used, that will take precedence. Any items without a specified group will be added to their own default group.
-
-Default: `none`
-
-#### `lazy` - Boolean
-
-Indicates whether to delay the fetching of images until they are opened.
-
-Default: `false` (or `true` if `lazy` modifier is provided)
-
-#### `muted` - Boolean
-
-Only applies to the `video` type. Determines whether the video should be muted by default.
-
-Default: `false`
-
-#### `autoplay` - Boolean
-
-Only applies to the `video` type. Determines whether the video should play automatically upon opening the lightbox. In most browsers this, **`muted` must also be true** for this to work.
-
-Default: `false`
+| Option       | Type      | Default | Description                                                                                                         |
+|--------------|-----------|---------|---------------------------------------------------------------------------------------------------------------------|
+| **url**      | `string`  |         | The media URL.                                                                                                      |
+| **type**     | `string`  | `image` | The media type. `image`, `video` or `embed`.                                                                        |
+| **group**    | `string?` | `null`  | The lightbox group the item should be added to. If omitted, the item is added to the default lightbox.              |
+| **lazy**     | `boolean` | `false` | Indicates whether to delay fetching the image until it is opened. Only applies to the `image` type.                 |
+| **muted**    | `boolean` | `false` | Determines whether the video should be muted by default. Only applies to the `video` type.                          |
+| **autoplay** | `boolean` | `false` | Determines whether the video should play automatically upon opening the lightbox. Only applies to the `video` type. |
 
 ## Magics
 
@@ -156,10 +145,12 @@ There are magic functions available for controlling lightboxes programmatically.
 
 ### `$lightbox(items, group)`
 
-#### Arguments
+#### Parameters
 
-* `items`: **String[] | Object[]** - An array of URLs or config objects.
-* `group`: **String** (optional) - The name of the lightbox group. Can be omitted to use the default group.
+| Parameter | Type                 | Default | Description                                                                                 |
+|-----------|----------------------|---------|---------------------------------------------------------------------------------------------|
+| **items** | `(string\|object)[]` |         | An array of URLs or config objects.                                                         |
+| **group** | `string\|null`       | `null`  | The name of the lightbox group. If `null`, the items will be added to the default lightbox. |
 
 #### Example Usage
 
@@ -174,10 +165,12 @@ There are magic functions available for controlling lightboxes programmatically.
 
 ### `$lightbox.open(urlOrRef, group)`
 
-#### Arguments
+#### Parameters
 
-* `items`: **String | HTMLElement** - A URL or element ref of the item to open. If omitted, the first item will be opened.
-* `group`: **String** (Optional) - The name of the lightbox group. Can be omitted to use the default group.
+| Parameter    | Type                        | Default | Description                                                                                           |
+|--------------|-----------------------------|---------|-------------------------------------------------------------------------------------------------------|
+| **urlOrRef** | `string\|HTMLElement\|null` | `null`  | The URL or element ref of the item to open. If `null`, the first item in the lightbox will be opened. |
+| **group**    | `string\|null`              | `null`  | The name of the lightbox group. If `null`, the default lightbox will be opened.                       |
 
 #### Example Usage
 
@@ -188,3 +181,7 @@ There are magic functions available for controlling lightboxes programmatically.
 or
 <a href="#" @click="$lightbox.open($refs.image)">Open Image</a>
 ```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

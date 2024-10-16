@@ -4,7 +4,8 @@
   "homepage": "https://github.com/oli-laban/alpine-tailwind-lightbox",
   "keywords": [
     "Alpine",
-    "Alpine JS",
+    "AlpineJS",
+    "Tailwind",
     "Lightbox"
   ],
   "version": "1.0.2",
