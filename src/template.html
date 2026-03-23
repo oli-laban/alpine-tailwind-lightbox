@@ -13,6 +13,7 @@
     @keydown.esc="$store.lightbox.show[group] = null"
     @keydown.left="$store.lightbox.prev(group)"
     @keydown.right="$store.lightbox.next(group)"
+    x-effect="if (!$store.lightbox.show[group]) $el.querySelectorAll('video').forEach(v => v.pause())"
 >
     <ul aria-live="polite" role="presentation" id="lightbox-list">
         <template x-for="(item, index) in $store.lightbox.items[group]" :key="item.id">
