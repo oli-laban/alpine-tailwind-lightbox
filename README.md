@@ -137,14 +137,14 @@ It is possible to create a lightbox without needing a DOM element per item. See 
 
 ## Config Object
 
-| Option       | Type      | Default | Description                                                                                                         |
-|--------------|-----------|---------|---------------------------------------------------------------------------------------------------------------------|
-| **url**      | `string`  |         | The media URL.                                                                                                      |
-| **type**     | `string`  | `image` | The media type. `image`, `video` or `embed`.                                                                        |
-| **group**    | `string?` | `null`  | The lightbox group the item should be added to. If omitted, the item is added to the default lightbox.              |
-| **lazy**     | `boolean` | `false` | Indicates whether to delay fetching the image until it is opened. Only applies to the `image` type.                 |
-| **muted**    | `boolean` | `false` | Determines whether the video should be muted by default. Only applies to the `video` type.                          |
-| **autoplay** | `boolean` | `false` | Determines whether the video should play automatically upon opening the lightbox. Only applies to the `video` type. |
+| Option       | Type           | Default | Description                                                                                                         |
+|--------------|----------------|--------|---------------------------------------------------------------------------------------------------------------------|
+| **url**      | `string`       |        | The media URL.                                                                                                      |
+| **type**     | `string`       | `image` | The media type. `image`, `video` or `embed`.                                                                        |
+| **group**    | `string\|null` | `null`  | The lightbox group the item should be added to. If omitted, the item is added to the default lightbox.              |
+| **lazy**     | `boolean`      | `false` | Indicates whether to delay fetching the image until it is opened. Only applies to the `image` type.                 |
+| **muted**    | `boolean`      | `false` | Determines whether the video should be muted by default. Only applies to the `video` type.                          |
+| **autoplay** | `boolean`      | `false` | Determines whether the video should play automatically upon opening the lightbox. Only applies to the `video` type. |
 
 ## Magics
 
@@ -187,6 +187,32 @@ There are magic functions available for controlling lightboxes programmatically.
 <a href="#" @click="$lightbox.open('./image.jpg')">Open Image</a>
 or
 <a href="#" @click="$lightbox.open($refs.image)">Open Image</a>
+```
+
+## Global Options
+
+| Option        | Type           | Default | Description                                                                                                              |
+|---------------|----------------|----|--------------------------------------------------------------------------------------------------------------------------|
+| **container** | `string\|null` | `null`  | A CSS selector for the element the lightbox should be appended to. If null, the lightbox will be appended to the `body`. |
+
+Using global options differs depending on whether you are using the module or CDN build.
+
+#### Module
+
+Use the `.configure` method when registering the plugin:
+
+```js
+Alpine.plugin(lightbox.configure({ container: '#lightbox-container' }))
+```
+
+#### CDN
+
+Declare a global variable in your HTML **before** the CDN script:
+
+```html
+<script>
+    window.AlpineLightboxConfig = { container: '#lightbox-container' }
+</script>
 ```
 
 ## License

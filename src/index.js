@@ -1,9 +1,10 @@
 import html from './template.html'
 
 let defaultGroup = null
+let pluginOptions = {}
 const lazyLoadedImages = []
 
-export default function (Alpine) {
+export default function lightbox(Alpine) {
     Alpine.store('lightbox', {
         show: {},
         items: {},
@@ -107,7 +108,11 @@ export default function (Alpine) {
             templateEl.id = `lightbox-${group}`
             templateEl.setAttribute('x-data', `{ group: '${group}' }`)
 
-            document.body.appendChild(templateEl)
+            const target = pluginOptions.container
+                ? document.querySelector(pluginOptions.container)
+                : document.body
+
+            target.appendChild(templateEl)
 
             setTimeout(() => {
                 if (!templateEl.hasOwnProperty('_x_isShown')) {
@@ -190,6 +195,12 @@ export default function (Alpine) {
             })
         })
     })
+}
+
+lightbox.configure = (options) => {
+    pluginOptions = { ...options }
+
+    return lightbox
 }
 
 const getRandomId = () => (Math.random() + 1).toString(36).substring(2, 15)
