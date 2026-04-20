@@ -36,13 +36,14 @@
                     </div>
                 </template>
                 <template x-if="item.type === 'image' && item.loaded">
-                    <img class="w-auto h-auto max-h-screen max-w-screen" :src="item.url" :alt="item.alt || ''">
+                    <img class="w-auto h-auto max-h-screen max-w-screen" loading="lazy" decoding="async" :src="item.url" :alt="item.alt || ''">
                 </template>
                 <template x-if="item.type === 'embed'">
                     <div class="flex items-center w-full self-stretch max-w-[calc(80vh/0.5625)]">
                         <div class="relative w-full h-0 pb-[56.25%]">
                             <iframe
                                 class="absolute top-0 left-0 w-full h-full"
+                                loading="lazy"
                                 allowfullscreen
                                 :src="item.url"
                             ></iframe>
